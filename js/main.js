@@ -4,7 +4,7 @@ import Util from './util.js'
 'use strict'
 
 const TEMPLATES = {
-    game: `<div class="game-container">
+    game: `<section class="game-container">
     <header class="game-header">
         <h2 class="game-title">2048</h2>
         <button class="new-game">NEW GAME</button>
@@ -18,17 +18,17 @@ const TEMPLATES = {
         </ul>
     </header>
     <div class="game-wrapper">
-        <table>
+        <table class="grids-table">
             <tbody class="grids-container">
             </tbody>
         </table>
         <div class="tiles-container"></div>
-        <div class="overlay">
+        <div class="game-overlay">
             <p class="game-result lose">Game Over!</p>
             <button class="game-retry">Play again</button>
         </div>
     </div>
-</div>`,
+</section>`,
 
 }
 
@@ -73,7 +73,7 @@ class Grids {
         }
     }
 
-    eachContent(rowCallback, colCallback) {
+    forEachContent(rowCallback, colCallback) {
         for (let ri = 0; ri < this.rowLen; ri++) {
             if (typeof rowCallback === 'function') {
                 // cb(item, index, array)
@@ -103,28 +103,40 @@ class Grids {
 }
 
 class Tile {
+
     constructor(value = 2, rowIndex = 0, colIndex = 0) {
         if (Tile.tilesContainer === undefined) {
             throw new Error('Tile must be assigned a container in Tils.tilesContainer')
         }
         this.container = Tile.tilesContainer
-        this.element = this.render(rowIndex, colIndex, value)
-        this.value = value
-        this.rowIndex = rowIndex
-        this.colIndex = colIndex
-        this.events = []
+        this.status = {
+            merged: false,
+            moved: false,
+            new: true
+        }
+        let [outer, inner] = this.render(rowIndex, colIndex, value)
+        this.element = outer
+        this.innerEl = inner
+        // init value
+        this._value = value
+        this._rowIndex = rowIndex
+        this._colIndex = colIndex
     }
 
     set value(value) {
         let oldValue = this._value
         this._value = value
-        this.element.innerText = value
-        this.element.className = this.element.className.replace(
+        this.innerEl.innerText = value
+        this.innerEl.className = this.innerEl.className.replace(
             /tile-value-(\d+)/, `tile-value-${value}`)
+        // only merge action can change value
+        this.element.className += ' tile-merged'
+        // flag isMerges
+        this.status.merged = true
         // emit events
         let cbs = Tile.events['tileValueChanged']
         if (cbs !== undefined) {
-            cbs.forEach((cb)=>{
+            cbs.forEach((cb) => {
                 cb({
                     type: 'tileValueChanged',
                     tile: this,
@@ -143,6 +155,7 @@ class Tile {
         this.element.className = this.element.className.replace(
             /tile-(\d+)-(\d+)/, `tile-${rowIndex}-$2`)
         this._rowIndex = rowIndex
+        this.status.moved = true
     }
 
     get rowIndex() {
@@ -153,6 +166,7 @@ class Tile {
         this.element.className = this.element.className.replace(/tile-(\d+)-(\d+)/,
             `tile-$1-${colIndex}`)
         this._colIndex = colIndex
+        this.status.moved = true
     }
 
     get colIndex() {
@@ -161,18 +175,29 @@ class Tile {
 
     render(rowIndex, colIndex, value) {
         let div = document.createElement('div')
-        div.className = `tile tile-${rowIndex}-${colIndex} tile-value-${value}`
-        div.innerText = value
+        div.className = `tile tile-${rowIndex}-${colIndex} tile-new`
+        let inner = document.createElement('div')
+        inner.className = `tile-inner tile-value-${value}`
+        inner.innerText = value
+        div.appendChild(inner)
         this.container.appendChild(div)
-        return div
+        this.status.new = true
+        return [div, inner]
     }
 
     static addEventHandler(type, cb) {
         let event = Tile.events[type]
         if (Tile.events[type] === undefined) {
-            Tile.events[type]= []
+            Tile.events[type] = []
         }
         Tile.events[type].push(cb)
+    }
+    resetStatus() {
+        this.status.moved = false
+        this.status.merged = false
+        this.status.new = false
+        this.element.className = this.element.className.replace('tile-merged', '')
+        this.element.className = this.element.className.replace('tile-new', '')
     }
 }
 
@@ -199,7 +224,7 @@ class Game {
         this.btnNewGame = el.querySelector('.new-game')
         this.gameResultEl = el.querySelector('.game-result')
         this.btnRetry = el.querySelector('.game-retry')
-        this.overlay = el.querySelector('.overlay')
+        this.overlay = el.querySelector('.game-overlay')
 
         // fix events context
         this.gameEvents = this.gameEvents.bind(this)
@@ -239,18 +264,9 @@ class Game {
                 let direction = keyMap[ev.keyCode + '']
                 if (direction !== undefined) {
                     ev.preventDefault()
-                    let someMoved = this.moveTiles(direction)
-                    // if none moved, then no new tile
-                    if (someMoved) {
-                        this.newRandomTiles(1)
-                    } else {
-                        // check if game over
-                        let emptyPos = this.grids.getEmptyGridsPos()
-                        if (emptyPos.length === 0 && !this.hasValueEqualedAdjTiles()) {
-                            // alert('Game over!')
-                            this.setGameResult('lose')
-                        }
-                    }
+                    this.resetTilesStatus()
+                    this.moveTiles(direction)
+                    this.checkTilesStatus()
                 }
                 break
             }
@@ -262,9 +278,39 @@ class Game {
             }
         }
     }
-    setGameResult(result='lose') {
+
+    resetTilesStatus() {
+        this.grids.forEachContent(null, function (tile) {
+            if (tile === null) return
+            tile.resetStatus()
+        })
+    }
+
+    checkTilesStatus() {
+        let someTileChanged = false
+        this.grids.forEachContent(null, function (tile) {
+            if (tile === null) return
+            if (tile.status.moved || tile.status.merged) {
+                someTileChanged = true
+                // todo: break inner and outer loop
+            }
+        })
+        // if none tile changed, no new tile
+        if (someTileChanged) {
+            this.newRandomTiles(1)
+        } else {
+            // check if game over
+            let emptyPos = this.grids.getEmptyGridsPos()
+            if (emptyPos.length === 0 && !this.hasValueEqualedAdjTiles()) {
+                // alert('Game over!')
+                this.setGameResult('lose')
+            }
+        }
+    }
+
+    setGameResult(result = 'lose') {
         this.gameResultEl.className = `game-result ${result}`
-        this.gameResultEl.innerHTML = result==='win'? 'You win!':'Game over!'
+        this.gameResultEl.innerHTML = result === 'win' ? 'You win!' : 'Game over!'
         this.overlay.style.display = 'block'
         document.removeEventListener('keydown', this.gameEvents)
     }
@@ -295,7 +341,6 @@ class Game {
     moveTiles(direction) {
         // some game rules to be considered:
         // if none moved, then new tile will not generate
-        let someMoved = false
         switch (direction) {
             case 'left': {
                 // colIndex--
@@ -315,14 +360,14 @@ class Game {
                                     this.score += preTile.value
                                     tile.element.parentNode.removeChild(tile.element)
                                     this.grids.contents[ri][ci] = null
-                                    someMoved = true
+                                    preTile.status.merged = true
                                     merged = true
                                     break
                                 } else if (tile.colIndex !== cii + 1) {
                                     tile.colIndex = cii + 1
                                     this.grids.contents[ri][ci] = null
                                     this.grids.contents[ri][cii + 1] = tile
-                                    someMoved = true
+                                    tile.status.moved = true
                                     break
                                 } else {
                                     break
@@ -331,7 +376,7 @@ class Game {
                                 tile.colIndex = cii
                                 this.grids.contents[ri][ci] = null
                                 this.grids.contents[ri][cii] = tile
-                                someMoved = true
+                                tile.status.moved = true
                                 break
                             }
 
@@ -357,14 +402,14 @@ class Game {
                                     this.score += preTile.value
                                     tile.element.parentNode.removeChild(tile.element)
                                     this.grids.contents[ri][ci] = null
-                                    someMoved = true
+                                    preTile.status.merged = true
                                     merged = true
                                     break
                                 } else if (tile.colIndex !== cii - 1) {
                                     tile.colIndex = cii - 1
                                     this.grids.contents[ri][ci] = null
                                     this.grids.contents[ri][cii - 1] = tile
-                                    someMoved = true
+                                    tile.status.moved = true
                                     break
                                 } else {
                                     break
@@ -373,7 +418,7 @@ class Game {
                                 tile.colIndex = cii
                                 this.grids.contents[ri][ci] = null
                                 this.grids.contents[ri][cii] = tile
-                                someMoved = true
+                                tile.status.moved = true
                                 break
                             }
 
@@ -384,18 +429,20 @@ class Game {
             }
             case 'up': {
                 // rowIndex--
+                // every column allow one merged
+                let merged = []
+                for (let ci=0,len=this.grids.colLen; ci<len;ci++) {
+                    merged[ci] = false
+                }
                 for (let ri = 1, len = this.grids.contents.length; ri < len; ri++) {
                     for (let ci = 0, len = this.grids.contents[ri].length; ci < len; ci++) {
-                        // every column allow one merged
-                        let merged = false
                         let tile = this.grids.contents[ri][ci]
                         if (tile === null) continue
                         let tri = tile.rowIndex
-                        while (tri > 0) {
-                            tri--
+                        while (--tri >= 0) {
                             let preTile = this.grids.contents[tri][ci]
                             if (preTile !== null) {
-                                if (preTile.value === tile.value && merged === false) {
+                                if (preTile.value === tile.value && merged[ci] === false) {
                                     // merged tile into the preTile with the same value
                                     // update preTile value
                                     preTile.value += tile.value
@@ -403,14 +450,14 @@ class Game {
                                     // remove this tile
                                     tile.element.parentNode.removeChild(tile.element)
                                     this.grids.contents[ri][ci] = null
-                                    someMoved = true
-                                    merged = true
+                                    preTile.status.merged = true
+                                    merged[ci] = true
                                     break
                                 } else if (tile.rowIndex !== tri + 1) {
                                     tile.rowIndex = tri + 1
                                     this.grids.contents[ri][ci] = null
                                     this.grids.contents[tile.rowIndex][ci] = tile
-                                    someMoved = true
+                                    tile.status.moved = true
                                     break
                                 } else {
                                     break
@@ -419,7 +466,7 @@ class Game {
                                 tile.rowIndex = tri
                                 this.grids.contents[ri][ci] = null
                                 this.grids.contents[tri][ci] = tile
-                                someMoved = true
+                                tile.status.moved = true
                                 break
                             }
                         }
@@ -429,18 +476,20 @@ class Game {
             }
             case 'down': {
                 // rowIndex++
+                // every column allow one merged
+                let merged = []
+                for (let ci=0,len=this.grids.colLen; ci<len;ci++) {
+                    merged[ci] = false
+                }
                 for (let ri = this.grids.contents.length - 2; ri >= 0; ri--) {
                     for (let ci = 0, len = this.grids.contents[ri].length; ci < len; ci++) {
-                        // every column allow one merged
-                        let merged = false
                         let tile = this.grids.contents[ri][ci]
                         if (tile === null) continue
                         let tri = tile.rowIndex
-                        while (tri < this.grids.contents.length - 1) {
-                            tri++
+                        while (++tri <= this.grids.contents.length - 1) {
                             let preTile = this.grids.contents[tri][ci]
                             if (preTile !== null) {
-                                if (preTile.value === tile.value && merged === false) {
+                                if (preTile.value === tile.value && merged[ci] === false) {
                                     // merged tile into the preTile with the same value
                                     // update preTile value
                                     preTile.value += tile.value
@@ -448,14 +497,14 @@ class Game {
                                     // remove this tile
                                     tile.element.parentNode.removeChild(tile.element)
                                     this.grids.contents[ri][ci] = null
-                                    someMoved = true
-                                    merged = true
+                                    preTile.status.merged = true
+                                    merged[ci] = true
                                     break
                                 } else if (tile.rowIndex !== tri - 1) {
                                     tile.rowIndex = tri - 1
                                     this.grids.contents[ri][ci] = null
                                     this.grids.contents[tile.rowIndex][ci] = tile
-                                    someMoved = true
+                                    tile.status.moved = true
                                     break
                                 } else {
                                     break
@@ -464,7 +513,7 @@ class Game {
                                 tile.rowIndex = tri
                                 this.grids.contents[ri][ci] = null
                                 this.grids.contents[tri][ci] = tile
-                                someMoved = true
+                                tile.status.moved = true
                                 break
                             }
                         }
@@ -475,7 +524,6 @@ class Game {
             default:
                 break
         }
-        return someMoved
     }
 
     newRandomTiles(n = 1, randomValues = [2, 4]) {
