@@ -388,10 +388,10 @@ body {
   font-family: "Helvetica Neue", Arial, sans-serif;
 }
 .tile-new>.tile-inner {
-  -webkit-animation: appear 0.2s ease 0.1s backwards;
-  -moz-animation: appear 0.2s ease 0.1s backwards;
-  -ms-animation: appear 0.2s ease 0.1s backwards;
-  animation: appear 0.2s ease 0.1s backwards;
+  -webkit-animation: appear 0.25s ease 0.15s backwards;
+  -moz-animation: appear 0.25s ease 0.15s backwards;
+  -ms-animation: appear 0.25s ease 0.15s backwards;
+  animation: appear 0.25s ease 0.15s backwards;
 }
 .tile-merged>.tile-inner {
   -webkit-animation: pop 0.2s ease 0.1s backwards;

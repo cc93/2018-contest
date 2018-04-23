@@ -163,8 +163,8 @@ class Tile {
     }
 
     set colIndex(colIndex) {
-        this.element.className = this.element.className.replace(/tile-(\d+)-(\d+)/,
-            `tile-$1-${colIndex}`)
+        this.element.className = this.element.className.replace(
+            /tile-(\d+)-(\d+)/, `tile-$1-${colIndex}`)
         this._colIndex = colIndex
         this.status.moved = true
     }
