@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "webpack --watch",
     "build": "webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server --hot"
   },
   "repository": {
     "type": "git",
@@ -20,15 +20,26 @@
   },
   "homepage": "https://github.com/cc93/2018-contest#readme",
   "devDependencies": {
+    "art-template-loader": "^1.4.3",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.6.1",
     "css-loader": "^0.28.11",
+    "gulp": "^3.9.1",
+    "gulp-px3rem": "^0.3.0",
+    "inline-source": "^6.1.4",
+    "postcss-adaptive": "^0.5.0",
+    "postcss-loader": "^2.1.4",
+    "px2rem-loader": "^0.1.9",
     "style-loader": "^0.21.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "stylus-px2rem": "^1.0.14",
     "webpack": "^4.4.1",
     "webpack-cli": "^2.0.13",
     "webpack-dev-server": "^3.1.1"
+  },
+  "dependencies": {
+    "art-template": "^4.12.2"
   }
 }

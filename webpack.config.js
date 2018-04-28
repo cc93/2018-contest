@@ -10,46 +10,40 @@ module.exports = {
         path: DIST
     },
     module: {
-        rules: [
-            {
-                test: /\.js$/,
-                include: [
-                    path.resolve(ROOT, 'js')
-                ],
-                loader: "babel-loader",
-                options: {
-                    presets: ["es2015"]
-                }
-            },
-            {
-                test: /\.css$/,
-                include: [
-                    path.resolve(ROOT, 'css')
-                    ],
-                use: ['style-loader', 'css-loader']
-
-            },
-            {
-                test: /\.styl$/,
-                include: [
-                    path.resolve(ROOT, 'css')
-                    ],
-                // Chain the less-loader with the css-loader and the style-loader
-                use: [{
-                    loader: 'style-loader', // creates style nodes from JS strings
-                    options: {
-                        sourceMap: true
-                    }
-                }, {
-                    loader: 'css-loader', // translates CSS into CommonJS
-                    options: {
-                        sourceMap: true
-                    }
-                }, {
-                    loader: 'stylus-loader' // compiles Stylus to CSS
-                }]
+        rules: [{
+            test: /\.js$/,
+            include: [
+                path.resolve(ROOT, 'js')
+            ],
+            loader: 'babel-loader',
+            options: {
+                presets: ['es2015']
             }
-        ]
+        }, {
+            test: /\.css$/,
+            include: [
+                path.resolve(ROOT, 'css')
+            ],
+            // Chain loaders
+            use: [{
+                loader: 'style-loader', // creates style nodes from JS strings
+                options: {
+                    sourceMap: true
+                }
+            }, {
+                loader: 'css-loader', // translates CSS into CommonJS
+                options: {
+                    sourceMap: true
+                }
+            }, {
+                loader: 'px2rem-loader', // convert px to rem
+                // options here
+                options: {
+                    remUnit: 75,
+                    remPrecision: 8
+                }
+            }]
+        }]
     },
     resolve: {
         modules: [
@@ -60,6 +54,7 @@ module.exports = {
     mode: 'development',
     devtool: 'inline-source-map',
     devServer: {
-        contentBase: ROOT,
+        host: '0.0.0.0',
+        port: 8080
     }
 }

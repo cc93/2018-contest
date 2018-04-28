@@ -1,4 +1,4 @@
-import '../css/main.styl'
+import '../css/main.css'
 import Util from './util.js'
 
 'use strict'

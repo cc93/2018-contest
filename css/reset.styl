@@ -97,7 +97,13 @@ reset-html5()
     display: block
   audio, canvas, video
     display inline-block
-*display inline
-*zoom 1
-audio:not([controls]),[hidden]
-  display none
+    //*display inline
+    //*zoom 1
+  audio:not([controls]),[hidden]
+    display none
+
+reset-ul()
+  list-style: none
+  margin:0
+  padding:0
+

@@ -1,3 +1,8 @@
+@import "normalize.css"
+@import "utils.styl"
+@import "vendor.styl"
+@import "animations.styl"
+
 gridWidth = 150px
 gridBorder = 10px
 rowLen = 4
@@ -5,160 +10,156 @@ colLen = 4
 tileFontSize = 56px
 containerWidth = gridWidth * colLen + gridBorder
 
-@import "normalize.css"
-@import "utils.styl"
-@import "vendor.styl"
-@import "animations.styl"
 
 body
-  margin: 10px 0
+  margin  10px 0
 
 .game-container
-  width: containerWidth
-  margin: 0 auto
+  width  containerWidth
+  margin  0 auto
 
 .game-header
-  height:80px;
-  color: white
-  font:24px/30px Arial
+  height 80px;
+  color  white
+  font 24px/30px Arial
   clearboth()
 
 .game-title
-  float: left
-  margin:0
-  color: #776e65
-  font: bold 80px/80px Arial
+  float  left
+  margin 0
+  color  #776e65
+  font  bold 80px/80px Arial
 
 .game-score-box, .game-best-score-box
-  float:right
-  width: 100px
-  height: 60px
-  list-style:none
-  margin:10px 1px
-  padding:0
-  text-align:center
-  border-radius: 3px
-  background-color: #B9ADA1
+  float right
+  width  100px
+  height  60px
+  list-style none
+  margin 10px 1px
+  padding 0
+  text-align center
+  border-radius  3px
+  background-color  #B9ADA1
 
 .new-game
-  float:right
-  width:130px
-  height:60px
-  margin:10px 1px
-  text-align:center
-  color: white
-  border-radius: 3px
-  background-color: #8f7a66
-  cursor: pointer
+  float right
+  width 130px
+  height 60px
+  margin 10px 1px
+  text-align center
+  color  white
+  border-radius  3px
+  background-color  #8f7a66
+  cursor  pointer
 
 
 .game-wrapper
-  position: relative
+  position  relative
 .game-overlay
-  position: absolute
-  left:0
-  right:0
-  top:0
-  bottom:0
-  z-index: 2
-  background-color: rgba(255,255,255,0.4)
-  display: none
-  text-align:center
+  position  absolute
+  left 0
+  right 0
+  top 0
+  bottom 0
+  z-index  2
+  background-color  rgba(255,255,255,0.4)
+  display  none
+  text-align center
 .game-result
-  margin-top: 30%
-  font: bold 60px/60px Arial
+  margin-top  30%
+  font  bold 60px/60px Arial
   &.lose
-    color:#766E66
+    color #766E66
   &.win
-    color:#E7C24F
+    color #E7C24F
 .game-retry
-  width:230px
-  height:48px
-  font: 24px/48px Arial
-  color:#F9F6F2
-  background-color: #8C7A68
-  cursor: pointer
+  width 230px
+  height 48px
+  font  24px/48px Arial
+  color #F9F6F2
+  background-color  #8C7A68
+  cursor  pointer
 
 .grids-table
-  background-color: #CDC0B4
-  border-collapse: collapse
+  background-color  #CDC0B4
+  border-collapse  collapse
 .grids-container tr
-  margin: 0
-  padding: 0
+  margin  0
+  padding  0
 .grids-container td
-  text-align: center
-  vertical-align: middle
-  width: gridWidth
-  height: gridWidth
-  box-sizing: border-box
-  border: gridBorder solid #BBADA0
-  margin: 0
-  padding: 0
+  text-align  center
+  vertical-align  middle
+  width  gridWidth
+  height  gridWidth
+  box-sizing  border-box
+  border  gridBorder solid #BBADA0
+  margin  0
+  padding  0
 
 .tile
-  position: absolute
-  left:0
-  top:0
-  z-index: 1
-  width: gridWidth - gridBorder
-  height: gridWidth - gridBorder
-  transition: transform 0.1s ease-in-out
-// tile position: tile-{rowIndex}-{colIndex}
+  position  absolute
+  left 0
+  top 0
+  z-index  1
+  width  gridWidth - gridBorder
+  height  gridWidth - gridBorder
+  transition  transform 0.1s ease-in-out
+// tile position  tile-{rowIndex}-{colIndex}
 for ri in range(0, rowLen - 1)
   for ci in range(0, colLen - 1)
     .tile-{ri}-{ci}
-      transform: translate(gridBorder + ci * gridWidth, gridBorder + ri * gridWidth)
+      transform  translate(gridBorder + ci * gridWidth, gridBorder + ri * gridWidth)
 .tile-inner
-  position: absolute
-  left:0
-  right:0
-  top:0
-  bottom:0
+  position  absolute
+  left 0
+  right 0
+  top 0
+  bottom 0
   text-align center
-  line-height: gridWidth - gridBorder
-  font-size: tileFontSize
-  font-weight: bold
-  font-family: "Helvetica Neue", Arial, sans-serif
+  line-height  gridWidth - gridBorder
+  font-size  tileFontSize; /*px*/
+  font-weight  bold
+  font-family  "Helvetica Neue", Arial, sans-serif
 // tile animation
 .tile-new>.tile-inner
-  animation: appear 0.25s ease 0.15s backwards
+  animation  appear 0.25s ease 0.15s backwards
 .tile-merged>.tile-inner
-  animation: pop 0.2s ease 0.1s backwards
+  animation  pop 0.2s ease 0.1s backwards
 
 // tile color
 .tile-value-2
-  color:#766E66
-  background-color: #EDE4DB
+  color #766E66
+  background-color  #EDE4DB
 .tile-value-4
-  color:#766E66
-  background-color: #EBE0CB
+  color #766E66
+  background-color  #EBE0CB
 .tile-value-8
-  color:#F9F6F2
-  background-color: #E9B381
+  color #F9F6F2
+  background-color  #E9B381
 .tile-value-16
-  color:#F9F6F2
-  background-color: #E99C6C
+  color #F9F6F2
+  background-color  #E99C6C
 .tile-value-32
-  color:#F9F6F2
-  background-color: #E88267
+  color #F9F6F2
+  background-color  #E88267
 .tile-value-64
-  color:#F9F6F2
-  background-color: #E66747
+  color #F9F6F2
+  background-color  #E66747
 .tile-value-128
-  color:#F9F6F2
-  background-color: #E9CF7F
+  color #F9F6F2
+  background-color  #E9CF7F
 .tile-value-256
-  color:#F9F6F2
-  background-color: #E9CC72
+  color #F9F6F2
+  background-color  #E9CC72
 .tile-value-512
-  color:#F9F6F2
-  background-color: #EDC850
+  color #F9F6F2
+  background-color  #EDC850
 .tile-value-1024
-  color: #F9F6F2
-  background-color: #EDC53F
+  color  #F9F6F2
+  background-color  #EDC53F
 .tile-value-2048
-  color: #F9F6F2
-  background-color: #EDC22E
+  color  #F9F6F2
+  background-color  #EDC22E
 
 
 
