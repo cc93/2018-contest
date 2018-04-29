@@ -1,14 +1,14 @@
 import '../css/main.css'
-import Util from './util.js'
+import {getRandomItem} from 'ccjs/util/util.js'
+import eventManager from 'ccjs/util/event-manager.js'
 import gameTemplate from '../templates/game.art'
-
 
 'use strict'
 
 const SETTINGS = {
     rowLen: 4,
     colLen: 4,
-    target: 2048,
+    target: 16,
 }
 
 
@@ -62,7 +62,6 @@ class Grids {
 }
 
 class Tile {
-
     constructor(value = 2, rowIndex = 0, colIndex = 0) {
         if (Tile.tilesContainer === undefined) {
             throw new Error('Tile must be assigned a container in Tils.tilesContainer')
@@ -93,17 +92,22 @@ class Tile {
         // flag isMerges
         this.status.merged = true
         // emit events
-        let cbs = Tile.events['tileValueChanged']
-        if (cbs !== undefined) {
-            cbs.forEach((cb) => {
-                cb({
-                    type: 'tileValueChanged',
-                    tile: this,
-                    newValue: value,
-                    oldValue: oldValue
-                })
-            })
-        }
+        // let cbs = Tile.events['tileValueChanged']
+        // if (cbs !== undefined) {
+        //     cbs.forEach((cb) => {
+        //         cb({
+        //             type: 'tileValueChanged',
+        //             tile: this,
+        //             newValue: value,
+        //             oldValue: oldValue
+        //         })
+        //     })
+        // }
+        eventManager.emit('tileValueChanged', {
+            tile: this,
+            newValue: value,
+            oldValue: oldValue
+        })
     }
 
     get value() {
@@ -144,13 +148,6 @@ class Tile {
         return [div, inner]
     }
 
-    static addEventHandler(type, cb) {
-        let event = Tile.events[type]
-        if (Tile.events[type] === undefined) {
-            Tile.events[type] = []
-        }
-        Tile.events[type].push(cb)
-    }
     resetStatus() {
         this.status.moved = false
         this.status.merged = false
@@ -160,7 +157,6 @@ class Tile {
     }
 }
 
-Tile.events = {}
 
 class Game {
     get score() {
@@ -189,7 +185,8 @@ class Game {
         this.gameEvents = this.gameEvents.bind(this)
         document.addEventListener('click', this.gameEvents)
         // self defined events
-        Tile.addEventHandler('tileValueChanged', this.gameEvents)
+        // Tile.addEventHandler('tileValueChanged', this.gameEvents)
+        eventManager.addListener('tileValueChanged', this.gameEvents)
     }
 
     newGame() {
@@ -203,7 +200,6 @@ class Game {
     }
 
     gameEvents(ev) {
-        ev = ev || event
         switch (ev.type) {
             case 'click': {
                 if (ev.target === this.btnNewGame ||
@@ -491,8 +487,8 @@ class Game {
             if (emptyGridsPos.length === 0) {
                 break
             }
-            let [rowIndex, colIndex] = Util.getRandomItem(emptyGridsPos)
-            let value = Util.getRandomItem(randomValues)
+            let [rowIndex, colIndex] = getRandomItem(emptyGridsPos)
+            let value = getRandomItem(randomValues)
             let tile = new Tile(value, rowIndex, colIndex)
             this.grids.contents[rowIndex][colIndex] = tile
             newTiles.push(tile)

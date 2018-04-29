@@ -55,13 +55,12 @@ module.exports = {
         }]
     },
     resolve: {
-        modules: [
-            'node_modules',
-            path.resolve(__dirname, 'app')
-        ]
+        alias: {
+            'ccjs': path.resolve(__dirname, '..', 'ccjs')
+        }
     },
     mode: 'development',
-    devtool: 'inline-source-map',
+    devtool: 'eval-source-map',
     devServer: {
         host: '0.0.0.0',
         port: 8080
