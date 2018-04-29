@@ -1,0 +1,22 @@
+<section class="game-container">
+    <header class="game-header">
+        <h2 class="game-title">2048</h2>
+        <button class="new-game">NEW GAME</button>
+        <ul class="game-best-score-box">
+            <li>BEST</li>
+            <li class="game-best-score">0</li>
+        </ul>
+        <ul class="game-score-box">
+            <li>SCORE</li>
+            <li class="game-score">0</li>
+        </ul>
+    </header>
+    <div class="game-wrapper">
+        <div class="grids-container"><% include('./grids.art') %></div>
+        <div class="tiles-container"></div>
+        <div class="game-overlay">
+            <p class="game-result lose">Game Over!</p>
+            <button class="game-retry">Play again</button>
+        </div>
+    </div>
+</section>

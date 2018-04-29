@@ -43,6 +43,15 @@ module.exports = {
                     remPrecision: 8
                 }
             }]
+        }, {
+            test: /\.art$/,
+            use: [{
+                loader: 'art-template-loader',
+                options: {
+                    htmlResourceRoot: __dirname,
+                    root: path.resolve(__dirname)
+                }
+            }]
         }]
     },
     resolve: {

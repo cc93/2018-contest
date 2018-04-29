@@ -1,36 +1,9 @@
 import '../css/main.css'
 import Util from './util.js'
+import gameTemplate from '../templates/game.art'
+
 
 'use strict'
-
-const TEMPLATES = {
-    game: `<section class="game-container">
-    <header class="game-header">
-        <h2 class="game-title">2048</h2>
-        <button class="new-game">NEW GAME</button>
-        <ul class="game-best-score-box">
-            <li>BEST</li>
-            <li class="game-best-score">0</li>
-        </ul>
-        <ul class="game-score-box">
-            <li>SCORE</li>
-            <li class="game-score">0</li>
-        </ul>
-    </header>
-    <div class="game-wrapper">
-        <table class="grids-table">
-            <tbody class="grids-container">
-            </tbody>
-        </table>
-        <div class="tiles-container"></div>
-        <div class="game-overlay">
-            <p class="game-result lose">Game Over!</p>
-            <button class="game-retry">Play again</button>
-        </div>
-    </div>
-</section>`,
-
-}
 
 const SETTINGS = {
     rowLen: 4,
@@ -48,20 +21,6 @@ class Grids {
         this.contents = []
         // init contents
         this.clearContents()
-        this.render()
-    }
-
-    render() {
-        // render HTML, iterate to generate tbody content
-        let s = ''
-        for (let ri = 0; ri < this.rowLen; ri++) {
-            s += `<tr>`
-            for (let ci = 0; ci < this.colLen; ci++) {
-                s += `<td></td>`
-            }
-            s += `</tr>`
-        }
-        this.container.innerHTML = s
     }
 
     clearContents() {
@@ -215,7 +174,7 @@ class Game {
 
     constructor(el) {
         // render template
-        el.innerHTML = TEMPLATES.game
+        el.innerHTML = gameTemplate({})
         this.container = el.querySelector('.game-container')
         this.grids = new Grids(el.querySelector('.grids-container'))
         Tile.tilesContainer = el.querySelector('.tiles-container')
@@ -231,7 +190,6 @@ class Game {
         document.addEventListener('click', this.gameEvents)
         // self defined events
         Tile.addEventHandler('tileValueChanged', this.gameEvents)
-        this.newGame()
     }
 
     newGame() {
@@ -551,4 +509,5 @@ main
  */
 
 const game = new Game(document.querySelector('#gameApp'))
+game.newGame()
 

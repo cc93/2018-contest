@@ -1,14 +1,14 @@
 @import "normalize.css"
 @import "utils.styl"
 @import "vendor.styl"
-@import "animations.styl"
 
-gridWidth = 150px
+gridWidth = 140px
 gridBorder = 10px
+cellWidth = gridWidth + gridBorder
 rowLen = 4
 colLen = 4
 tileFontSize = 56px
-containerWidth = gridWidth * colLen + gridBorder
+containerWidth = gridBorder + cellWidth * colLen
 
 
 body
@@ -80,35 +80,34 @@ body
   background-color  #8C7A68
   cursor  pointer
 
-.grids-table
+.grids-container
   background-color  #CDC0B4
-  border-collapse  collapse
-.grids-container tr
-  margin  0
-  padding  0
-.grids-container td
-  text-align  center
-  vertical-align  middle
-  width  gridWidth
-  height  gridWidth
-  box-sizing  border-box
+.grids-row
+  font-size 0
+.grids-cell
+  display: inline-block
+  size(gridWidth)
   border  gridBorder solid #BBADA0
-  margin  0
+  margin 0
   padding  0
+  margin-right - gridBorder
+  margin-bottom - gridBorder
+  text-align center
+  vertical-align middle
 
 .tile
   position  absolute
   left 0
   top 0
   z-index  1
-  width  gridWidth - gridBorder
-  height  gridWidth - gridBorder
+  width  gridWidth
+  height  gridWidth
   transition  transform 0.1s ease-in-out
 // tile position  tile-{rowIndex}-{colIndex}
 for ri in range(0, rowLen - 1)
   for ci in range(0, colLen - 1)
     .tile-{ri}-{ci}
-      transform  translate(gridBorder + ci * gridWidth, gridBorder + ri * gridWidth)
+      transform  translate(gridBorder + ci * cellWidth, gridBorder + ri * cellWidth)
 .tile-inner
   position  absolute
   left 0
@@ -117,7 +116,7 @@ for ri in range(0, rowLen - 1)
   bottom 0
   text-align center
   line-height  gridWidth - gridBorder
-  font-size  tileFontSize; /*px*/
+  font-size  tileFontSize
   font-weight  bold
   font-family  "Helvetica Neue", Arial, sans-serif
 // tile animation
@@ -167,3 +166,4 @@ for ri in range(0, rowLen - 1)
 
 
 
+@import "animations.styl"
