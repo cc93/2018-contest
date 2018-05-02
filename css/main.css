@@ -37,6 +37,16 @@ body {
   border-radius: 3px;
   background-color: #b9ada1;
 }
+.game-score-addition {
+  display: -webkit-box /* OLD - iOS 6-, Safari 3.1-6 */;
+  display: -moz-box /* OLD - Firefox 19- (buggy but mostly works) */;
+  display: inline-block;
+  position: absolute;
+  -webkit-animation: fadeOutUp 1.2s ease 0.1s both;
+  -moz-animation: fadeOutUp 1.2s ease 0.1s both;
+  -ms-animation: fadeOutUp 1.2s ease 0.1s both;
+  animation: fadeOutUp 1.2s ease 0.1s both;
+}
 .new-game {
   float: right;
   width: 130px;
@@ -57,7 +67,7 @@ body {
   left: 0;
   right: 0;
   top: 0;
-  bottom: 0;
+  bottom: -10px;
   z-index: 2;
   background-color: rgba(255,255,255,0.4);
   display: -webkit-box /* OLD - iOS 6-, Safari 3.1-6 */;
@@ -441,5 +451,145 @@ body {
     -moz-transform: scale(1);
     -ms-transform: scale(1);
     transform: scale(1);
+  }
+}
+@-moz-keyframes fadeOutUp {
+  0% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(0, -100%);
+    -moz-transform: translate(0, -100%);
+    -ms-transform: translate(0, -100%);
+    transform: translate(0, -100%);
+  }
+  33% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(100%, -100%);
+    -moz-transform: translate(100%, -100%);
+    -ms-transform: translate(100%, -100%);
+    transform: translate(100%, -100%);
+  }
+  100% {
+    -webkit-opacity: 0;
+    -moz-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    -webkit-transform: translate(100%, -400%);
+    -moz-transform: translate(100%, -400%);
+    -ms-transform: translate(100%, -400%);
+    transform: translate(100%, -400%);
+  }
+}
+@-webkit-keyframes fadeOutUp {
+  0% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(0, -100%);
+    -moz-transform: translate(0, -100%);
+    -ms-transform: translate(0, -100%);
+    transform: translate(0, -100%);
+  }
+  33% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(100%, -100%);
+    -moz-transform: translate(100%, -100%);
+    -ms-transform: translate(100%, -100%);
+    transform: translate(100%, -100%);
+  }
+  100% {
+    -webkit-opacity: 0;
+    -moz-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    -webkit-transform: translate(100%, -400%);
+    -moz-transform: translate(100%, -400%);
+    -ms-transform: translate(100%, -400%);
+    transform: translate(100%, -400%);
+  }
+}
+@-o-keyframes fadeOutUp {
+  0% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(0, -100%);
+    -moz-transform: translate(0, -100%);
+    -ms-transform: translate(0, -100%);
+    transform: translate(0, -100%);
+  }
+  33% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(100%, -100%);
+    -moz-transform: translate(100%, -100%);
+    -ms-transform: translate(100%, -100%);
+    transform: translate(100%, -100%);
+  }
+  100% {
+    -webkit-opacity: 0;
+    -moz-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    -webkit-transform: translate(100%, -400%);
+    -moz-transform: translate(100%, -400%);
+    -ms-transform: translate(100%, -400%);
+    transform: translate(100%, -400%);
+  }
+}
+@keyframes fadeOutUp {
+  0% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(0, -100%);
+    -moz-transform: translate(0, -100%);
+    -ms-transform: translate(0, -100%);
+    transform: translate(0, -100%);
+  }
+  33% {
+    -webkit-opacity: 1;
+    -moz-opacity: 1;
+    opacity: 1;
+    -ms-filter: none;
+    filter: none;
+    -webkit-transform: translate(100%, -100%);
+    -moz-transform: translate(100%, -100%);
+    -ms-transform: translate(100%, -100%);
+    transform: translate(100%, -100%);
+  }
+  100% {
+    -webkit-opacity: 0;
+    -moz-opacity: 0;
+    opacity: 0;
+    filter: alpha(opacity=0);
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    -webkit-transform: translate(100%, -400%);
+    -moz-transform: translate(100%, -400%);
+    -ms-transform: translate(100%, -400%);
+    transform: translate(100%, -400%);
   }
 }
